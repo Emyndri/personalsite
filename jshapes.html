@@ -328,180 +328,85 @@
   }
 
   /* ─── SIDEBAR COLLAPSE ─── */
-  .panel {
-    transition: width 0.3s ease, min-width 0.3s ease, transform 0.3s ease;
-  }
-
-  /* Desktop collapse: shrink width to 0 */
+  .panel { transition: width 0.3s ease, min-width 0.3s ease, transform 0.3s ease; }
   @media (min-width: 721px) {
-    body.sidebar-collapsed .panel {
-      width: 0;
-      min-width: 0;
-    }
+    body.sidebar-collapsed .panel { width: 0; min-width: 0; }
   }
-
-  /* Mobile: panel becomes an overlay drawer */
   @media (max-width: 720px) {
     .panel {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100vh;
-      z-index: 20;
-      width: min(320px, 85vw);
-      min-width: min(320px, 85vw);
-      box-shadow: 4px 0 24px rgba(0, 0, 0, 0.7);
+      position: fixed; top: 0; left: 0; height: 100vh; z-index: 20;
+      width: min(320px, 85vw); min-width: min(320px, 85vw);
+      box-shadow: 4px 0 24px rgba(0,0,0,0.7);
     }
-    body.sidebar-collapsed .panel {
-      transform: translateX(-100%);
-    }
+    body.sidebar-collapsed .panel { transform: translateX(-100%); }
     .canvas-hint { display: none; }
   }
 
-  /* Mobile: dim backdrop behind open drawer */
   .panel-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 15;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 15;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
   }
   @media (max-width: 720px) {
-    body:not(.sidebar-collapsed) .panel-backdrop {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    body:not(.sidebar-collapsed) .panel-backdrop { opacity: 1; pointer-events: auto; }
   }
 
-  /* Toggle button — moves with the sidebar */
   .panel-toggle {
-    position: fixed;
-    top: 14px;
-    left: 14px;
-    width: 38px;
-    height: 38px;
-    border-radius: 8px;
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    color: var(--text-secondary);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    font-family: inherit;
-    padding: 0;
-    z-index: 30;
+    position: fixed; top: 14px; left: 14px;
+    width: 38px; height: 38px; border-radius: 8px;
+    background: var(--bg-panel); border: 1px solid var(--border); color: var(--text-secondary);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-family: inherit; padding: 0; z-index: 30;
     transition: left 0.3s ease, color 0.2s, background 0.2s, border-color 0.2s;
     -webkit-tap-highlight-color: transparent;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
   }
-  .panel-toggle:hover,
-  .panel-toggle:focus-visible {
-    color: var(--accent);
-    border-color: var(--accent);
-    background: var(--bg-hover);
-    outline: none;
+  .panel-toggle:hover, .panel-toggle:focus-visible {
+    color: var(--accent); border-color: var(--accent); background: var(--bg-hover); outline: none;
   }
-  .panel-toggle-icon {
-    display: inline-block;
-    transition: transform 0.3s ease;
-    line-height: 1;
-  }
-  body.sidebar-collapsed .panel-toggle-icon {
-    transform: rotate(180deg);
-  }
+  .panel-toggle-icon { display: inline-block; transition: transform 0.3s ease; line-height: 1; }
+  body.sidebar-collapsed .panel-toggle-icon { transform: rotate(180deg); }
   @media (min-width: 721px) {
-    body:not(.sidebar-collapsed) .panel-toggle {
-      left: 334px;
-    }
+    body:not(.sidebar-collapsed) .panel-toggle { left: 334px; }
   }
   @media (max-width: 720px) {
-    body:not(.sidebar-collapsed) .panel-toggle {
-      left: calc(min(320px, 85vw) + 14px);
-    }
+    body:not(.sidebar-collapsed) .panel-toggle { left: calc(min(320px, 85vw) + 14px); }
   }
 
   /* ─── FLOATING ANGLE BAR ─── */
   .angle-bar {
-    position: absolute;
-    bottom: 18px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    background: rgba(17, 17, 24, 0.92);
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 10px 18px;
-    backdrop-filter: blur(10px);
-    z-index: 5;
+    position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 14px;
+    background: rgba(17,17,24,0.92); border: 1px solid var(--border); border-radius: 999px;
+    padding: 10px 18px; backdrop-filter: blur(10px); z-index: 5;
     width: min(480px, calc(100% - 32px));
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
     transition: opacity 0.2s ease;
   }
-
-  /* Hide angle bar when the mobile drawer is open — sidebar has angle input */
   @media (max-width: 720px) {
-    body:not(.sidebar-collapsed) .angle-bar {
-      opacity: 0;
-      pointer-events: none;
-    }
+    body:not(.sidebar-collapsed) .angle-bar { opacity: 0; pointer-events: none; }
   }
   .angle-bar-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1.2px; flex-shrink: 0;
   }
   .angle-bar-slider {
-    flex: 1;
-    -webkit-appearance: none;
-    appearance: none;
-    height: 4px;
-    background: var(--bg-input);
-    border-radius: 2px;
-    outline: none;
-    cursor: pointer;
-    margin: 0;
+    flex: 1; -webkit-appearance: none; appearance: none;
+    height: 4px; background: var(--bg-input); border-radius: 2px;
+    outline: none; cursor: pointer; margin: 0;
   }
   .angle-bar-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    background: var(--accent);
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 0 0 12px var(--accent-glow);
-    transition: transform 0.15s ease;
+    -webkit-appearance: none; appearance: none; width: 18px; height: 18px;
+    background: var(--accent); border-radius: 50%; cursor: pointer;
+    box-shadow: 0 0 12px var(--accent-glow); transition: transform 0.15s ease;
   }
-  .angle-bar-slider::-webkit-slider-thumb:hover {
-    transform: scale(1.15);
-  }
+  .angle-bar-slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
   .angle-bar-slider::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
-    background: var(--accent);
-    border-radius: 50%;
-    cursor: pointer;
-    border: none;
-    box-shadow: 0 0 12px var(--accent-glow);
+    width: 18px; height: 18px; background: var(--accent); border-radius: 50%;
+    cursor: pointer; border: none; box-shadow: 0 0 12px var(--accent-glow);
   }
   .angle-bar-value {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    color: var(--text-primary);
-    min-width: 50px;
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-    flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-primary);
+    min-width: 50px; text-align: right; font-variant-numeric: tabular-nums; flex-shrink: 0;
   }
 </style>
 </head>
@@ -711,7 +616,6 @@ createAxes();
 createOriginDot();
 
 // ─── RESIZE ───
-// Initial sizing — uses the camera's z-position as the default span until a shape is generated.
 function resize() {
   const wrap = canvas.parentElement;
   const w = wrap.clientWidth;
@@ -729,9 +633,8 @@ function resize() {
 }
 resize();
 
-// Subsequent resizes (window resize OR canvas-wrap resizing when the sidebar
-// collapses) preserve the user's current vertical view and just adjust the
-// horizontal frustum to match the new aspect ratio.
+// Subsequent resizes (window resize OR canvas-wrap shrinking when sidebar collapses)
+// preserve the user's vertical view and just adjust horizontal aspect.
 function handleCanvasResize() {
   const wrap = canvas.parentElement;
   const w = wrap.clientWidth;
@@ -768,4 +671,210 @@ function gcd(a, b) {
   return a / precision;
 }
 
-functio
+function lcm(a, b) {
+  if (a === 0 || b === 0) return 0;
+  return Math.abs(a * b) / gcd(a, b);
+}
+
+function generateShape(autoFit = true) {
+  // Clear previous
+  while (shapeGroup.children.length) {
+    const child = shapeGroup.children[0];
+    child.geometry?.dispose();
+    child.material?.dispose();
+    shapeGroup.remove(child);
+  }
+
+  // Parse inputs
+  const seedStr = document.getElementById('seedInput').value.trim();
+  const seeds = seedStr.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
+  if (seeds.length === 0) return;
+
+  const angleDeg = parseFloat(document.getElementById('angleInput').value) || 90;
+  const sizeMult = parseFloat(document.getElementById('sizeInput').value) || 100;
+  const iterations = parseInt(document.getElementById('iterInput').value) || 2520;
+  const thickness = parseFloat(document.getElementById('thickInput').value) || 1.5;
+  const lineColor = document.getElementById('colorInput').value;
+
+  // Multiply seed values by pixel multiplier
+  const scaledSeeds = seeds.map(s => s * sizeMult);
+
+  // Compute cycle length: lcm(seedLength, 360 / gcd(angle, 360))
+  const directionCycle = 360 / gcd(angleDeg, 360);
+  const cycleLength = lcm(seeds.length, directionCycle);
+  document.getElementById('statCycle').textContent = cycleLength.toLocaleString() + ' iters';
+
+  // Draw lines: starting at origin, rotating by angle each step
+  // Using the same trig as the Python code (sin for x, cos for y)
+  let x = 0;
+  let y = 0;
+  let currentAngle = 360; // Python starts at 360
+
+  const positions = [x, y, 0];
+  let totalLength = 0;
+
+  for (let i = 0; i < iterations; i++) {
+    const lineLen = scaledSeeds[i % scaledSeeds.length];
+    const rad = currentAngle * (Math.PI / 180);
+    const nx = x + lineLen * Math.sin(rad);
+    const ny = y + lineLen * Math.cos(rad);
+
+    positions.push(nx, ny, 0);
+    totalLength += Math.abs(lineLen);
+
+    x = nx;
+    y = ny;
+    currentAngle += angleDeg;
+  }
+
+  // Create fat line using Line2 for thickness control
+  const geometry = new LineGeometry();
+  geometry.setPositions(positions);
+
+  const matLine = new LineMaterial({
+    color: new THREE.Color(lineColor).getHex(),
+    linewidth: thickness,
+    worldUnits: false,
+    alphaToCoverage: false,
+  });
+  matLine.resolution.set(canvas.clientWidth, canvas.clientHeight);
+
+  const line = new Line2(geometry, matLine);
+  line.computeLineDistances();
+  shapeGroup.add(line);
+
+  // Store material ref for resize updates
+  shapeGroup.userData.lineMaterial = matLine;
+
+  // Update stats
+  document.getElementById('statLines').textContent = iterations.toLocaleString();
+  document.getElementById('statLength').textContent = Math.round(totalLength).toLocaleString() + ' px';
+
+  // Compute bounding box
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  for (let i = 0; i < positions.length; i += 3) {
+    if (positions[i] < minX) minX = positions[i];
+    if (positions[i] > maxX) maxX = positions[i];
+    if (positions[i+1] < minY) minY = positions[i+1];
+    if (positions[i+1] > maxY) maxY = positions[i+1];
+  }
+  const bw = Math.round(maxX - minX);
+  const bh = Math.round(maxY - minY);
+  document.getElementById('statBBox').textContent = `${bw} × ${bh}`;
+
+  // Auto-fit camera to shape — only when explicitly requested (Generate button).
+  // Skipped when called from the live angle slider so the user's zoom/pan stays put.
+  if (autoFit) {
+    const cx = (minX + maxX) / 2;
+    const cy = (minY + maxY) / 2;
+    const margin = 1.15;
+    const wrap = canvas.parentElement;
+    const aspect = wrap.clientWidth / wrap.clientHeight;
+    const halfSpan = Math.max(bh / 2, bw / (2 * aspect)) * margin;
+
+    camera.position.set(cx, cy, 500);
+    controls.target.set(cx, cy, 0);
+
+    camera.left = -halfSpan * aspect;
+    camera.right = halfSpan * aspect;
+    camera.top = halfSpan;
+    camera.bottom = -halfSpan;
+    camera.updateProjectionMatrix();
+    controls.update();
+  }
+}
+
+function clearShape() {
+  while (shapeGroup.children.length) {
+    const child = shapeGroup.children[0];
+    child.geometry?.dispose();
+    child.material?.dispose();
+    shapeGroup.remove(child);
+  }
+  document.getElementById('statCycle').textContent = '—';
+  document.getElementById('statLines').textContent = '—';
+  document.getElementById('statLength').textContent = '—';
+  document.getElementById('statBBox').textContent = '—';
+
+  // Reset camera
+  camera.position.set(0, 0, 500);
+  controls.target.set(0, 0, 0);
+  resize();
+  controls.update();
+}
+
+// ─── EVENT LISTENERS ───
+document.getElementById('btnGenerate').addEventListener('click', generateShape);
+document.getElementById('btnClear').addEventListener('click', clearShape);
+
+document.getElementById('toggleGrid').addEventListener('change', (e) => {
+  if (gridHelper) gridHelper.visible = e.target.checked;
+});
+document.getElementById('toggleAxes').addEventListener('change', (e) => {
+  if (axesGroup) axesGroup.visible = e.target.checked;
+});
+document.getElementById('toggleOrigin').addEventListener('change', (e) => {
+  if (originDot) originDot.visible = e.target.checked;
+});
+
+document.getElementById('colorInput').addEventListener('input', (e) => {
+  document.getElementById('colorLabel').textContent = e.target.value;
+});
+
+// Generate on Enter key
+document.querySelectorAll('input').forEach(inp => {
+  if (inp.type !== 'checkbox' && inp.type !== 'color') {
+    inp.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') generateShape();
+    });
+  }
+});
+
+// ─── SIDEBAR TOGGLE ───
+const panelToggle = document.getElementById('panelToggle');
+const panelBackdrop = document.getElementById('panelBackdrop');
+const mobileQuery = window.matchMedia('(max-width: 720px)');
+
+if (mobileQuery.matches) {
+  document.body.classList.add('sidebar-collapsed');
+  panelToggle.setAttribute('aria-expanded', 'false');
+}
+
+function setSidebar(collapsed) {
+  document.body.classList.toggle('sidebar-collapsed', collapsed);
+  panelToggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+}
+
+panelToggle.addEventListener('click', () => {
+  setSidebar(!document.body.classList.contains('sidebar-collapsed'));
+});
+panelBackdrop.addEventListener('click', () => setSidebar(true));
+
+// ─── FLOATING ANGLE SLIDER ───
+const angleSlider = document.getElementById('angleSlider');
+const angleSliderValue = document.getElementById('angleSliderValue');
+const angleInputElem = document.getElementById('angleInput');
+
+function syncSliderFromInput() {
+  const val = parseFloat(angleInputElem.value);
+  if (!isNaN(val)) {
+    angleSlider.value = Math.max(0, Math.min(360, val));
+    angleSliderValue.textContent = val + '\u00B0';
+  }
+}
+syncSliderFromInput();
+
+angleSlider.addEventListener('input', (e) => {
+  const val = parseFloat(e.target.value);
+  angleInputElem.value = val;
+  angleSliderValue.textContent = val + '\u00B0';
+  generateShape(false);
+});
+
+angleInputElem.addEventListener('input', syncSliderFromInput);
+
+// Generate default shape on load
+generateShape();
+</script>
+</body>
+</html>
