@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<title>JShapes — Geometric Line Drawing</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --bg-deep: #0a0a0f;
+    --bg-panel: #111118;
+    --bg-input: #1a1a24;
+    --bg-hover: #22222e;
+    --border: #2a2a3a;
+    --border-focus: #5b5bff;
+    --text-primary: #e8e8f0;
+    --text-secondary: #8888a0;
+    --text-dim: #55556a;
+    --accent: #6c6cff;
+    --accent-glow: rgba(108, 108, 255, 0.25);
+    --danger: #ff4466;
+    --danger-dim: rgba(255, 68, 102, 0.15);
+    --success: #44ffaa;
+    --line-color: #6c6cff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: 'DM Sans', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+  }
+
+  /* ─── LEFT PANEL ─── */
+  .panel {
+    width: 320px;
+    min-width: 320px;
+    height: 100vh;
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    overflow-y: auto;
+  }
+
+  .panel-header {
+    padding: 20px 24px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .back-link {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    text-decoration: none;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover { color: var(--accent); }
+
+  .panel-header h1 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .panel-header p {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .panel-body {
+    padding: 20px 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .field-group label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+  }
+
+  .field-group .hint {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: -2px;
+  }
+
+  input[type="text"], input[type="number"] {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  input:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  input::placeholder {
+    color: var(--text-dim);
+  }
+
+  .row {
+    display: flex;
+    gap: 12px;
+  }
+
+  .row .field-group { flex: 1; }
+
+  /* ─── BUTTONS ─── */
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  button {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 6px;
+    padding: 11px 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-generate {
+    flex: 1;
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-generate:hover {
+    background: #7d7dff;
+    box-shadow: 0 0 20px var(--accent-glow);
+  }
+
+  .btn-clear {
+    background: var(--danger-dim);
+    color: var(--danger);
+    border: 1px solid rgba(255,68,102,0.2);
+  }
+  .btn-clear:hover {
+    background: rgba(255,68,102,0.25);
+  }
+
+  /* ─── TOGGLES ─── */
+  .toggle-section {
+    border-top: 1px solid var(--border);
+    padding-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .toggle-section .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-dim);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+  }
+
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .toggle-row span {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .switch {
+    position: relative;
+    width: 40px;
+    height: 22px;
+    cursor: pointer;
+  }
+
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    inset: 0;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    transition: all 0.25s;
+  }
+
+  .slider::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 2px;
+    top: 2px;
+    background: var(--text-dim);
+    border-radius: 50%;
+    transition: all 0.25s;
+  }
+
+  .switch input:checked + .slider {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .switch input:checked + .slider::before {
+    transform: translateX(18px);
+    background: #fff;
+  }
+
+  /* ─── COLOR PICKER ─── */
+  .color-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  input[type="color"] {
+    -webkit-appearance: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    width: 36px;
+    height: 28px;
+    padding: 2px;
+    background: var(--bg-input);
+    cursor: pointer;
+  }
+
+  input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+  input[type="color"]::-webkit-color-swatch { border: none; border-radius: 2px; }
+
+  .color-row span {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  /* ─── STATS ─── */
+  .stats {
+    margin-top: auto;
+    border-top: 1px solid var(--border);
+    padding: 16px 0 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .stat-line {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+  }
+
+  .stat-line .stat-label { color: var(--text-dim); }
+  .stat-line .stat-value { color: var(--text-secondary); }
+
+  /* ─── CANVAS ─── */
+  .canvas-wrap {
+    flex: 1;
+    position: relative;
+    background: var(--bg-deep);
+  }
+
+  #three-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .canvas-hint {
+    position: absolute;
+    bottom: 16px;
+    right: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.8px;
+    pointer-events: none;
+    opacity: 0.6;
+  }
+</style>
+</head>
+<body>
+
+<!-- LEFT PANEL -->
+<div class="panel">
+  <div class="panel-header">
+    <a href="index.html" class="back-link">&larr; Jacob Cavallo</a>
+    <h1>JShapes</h1>
+    <p>Geometric line drawing engine based off doodles I used to draw in high school math class</p>
+  </div>
+  <div class="panel-body">
+
+    <div class="field-group">
+      <label>Seed Numbers</label>
+      <input type="text" id="seedInput" value="1, 2, 3, 4, 5, 6, 7, 8" placeholder="e.g. 1, 2, 3">
+      <span class="hint">Comma-separated line lengths</span>
+    </div>
+
+    <div class="row">
+      <div class="field-group">
+        <label>Angle (°)</label>
+        <input type="number" id="angleInput" value="37" step="1">
+      </div>
+      <div class="field-group">
+        <label>Pixel Mult</label>
+        <input type="number" id="sizeInput" value="100" step="1" min="1">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field-group">
+        <label>Iterations</label>
+        <input type="number" id="iterInput" value="2520" step="1" min="1" max="100000">
+      </div>
+      <div class="field-group">
+        <label>Thickness</label>
+        <input type="number" id="thickInput" value="1.5" step="0.5" min="0.5" max="10">
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>Line Color</label>
+      <div class="color-row">
+        <input type="color" id="colorInput" value="#44ffaa">
+        <span id="colorLabel">#44ffaa</span>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-generate" id="btnGenerate">Generate</button>
+      <button class="btn-clear" id="btnClear">Clear</button>
+    </div>
+
+    <div class="toggle-section">
+      <span class="section-label">Display</span>
+      <div class="toggle-row">
+        <span>Grid</span>
+        <label class="switch">
+          <input type="checkbox" id="toggleGrid">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <span>Axes</span>
+        <label class="switch">
+          <input type="checkbox" id="toggleAxes">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <span>Origin Dot</span>
+        <label class="switch">
+          <input type="checkbox" id="toggleOrigin">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="stats" id="statsBlock">
+      <div class="stat-line">
+        <span class="stat-label">Cycle length</span>
+        <span class="stat-value" id="statCycle">—</span>
+      </div>
+      <div class="stat-line">
+        <span class="stat-label">Lines drawn</span>
+        <span class="stat-value" id="statLines">—</span>
+      </div>
+      <div class="stat-line">
+        <span class="stat-label">Total length</span>
+        <span class="stat-value" id="statLength">—</span>
+      </div>
+      <div class="stat-line">
+        <span class="stat-label">Bounding box</span>
+        <span class="stat-value" id="statBBox">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- THREE.JS CANVAS -->
+<div class="canvas-wrap">
+  <canvas id="three-canvas"></canvas>
+  <div class="canvas-hint">scroll to zoom · drag to pan · right-drag to rotate</div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { Line2 } from 'three/addons/lines/Line2.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
+
+// ─── SCENE SETUP ───
+const canvas = document.getElementById('three-canvas');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+renderer.setClearColor(0x0a0a0f, 1);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+const scene = new THREE.Scene();
+const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10000);
+camera.position.set(0, 0, 500);
+camera.lookAt(0, 0, 0);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableRotate = true;
+controls.enablePan = true;
+controls.enableZoom = true;
+controls.screenSpacePanning = true;
+controls.mouseButtons = {
+  LEFT: THREE.MOUSE.PAN,
+  MIDDLE: THREE.MOUSE.DOLLY,
+  RIGHT: THREE.MOUSE.ROTATE
+};
+controls.zoomSpeed = 1.2;
+
+// ─── HELPERS ───
+let gridHelper, axesGroup, originDot;
+const shapeGroup = new THREE.Group();
+scene.add(shapeGroup);
+
+function createGrid() {
+  if (gridHelper) scene.remove(gridHelper);
+  const size = 100000;
+  const divisions = 500;
+  gridHelper = new THREE.GridHelper(size, divisions, 0x1a1a2e, 0x14141f);
+  gridHelper.rotation.x = Math.PI / 2;
+  gridHelper.visible = document.getElementById('toggleGrid').checked;
+  scene.add(gridHelper);
+}
+
+function createAxes() {
+  if (axesGroup) scene.remove(axesGroup);
+  axesGroup = new THREE.Group();
+
+  const len = 50000;
+  const xGeo = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(-len, 0, 0), new THREE.Vector3(len, 0, 0)
+  ]);
+  const yGeo = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(0, -len, 0), new THREE.Vector3(0, len, 0)
+  ]);
+  const xMat = new THREE.LineBasicMaterial({ color: 0x443344, linewidth: 1 });
+  const yMat = new THREE.LineBasicMaterial({ color: 0x334444, linewidth: 1 });
+  axesGroup.add(new THREE.Line(xGeo, xMat));
+  axesGroup.add(new THREE.Line(yGeo, yMat));
+  axesGroup.visible = document.getElementById('toggleAxes').checked;
+  scene.add(axesGroup);
+}
+
+function createOriginDot() {
+  if (originDot) scene.remove(originDot);
+  const geo = new THREE.CircleGeometry(4, 32);
+  const mat = new THREE.MeshBasicMaterial({ color: 0x6c6cff, transparent: true, opacity: 0.6 });
+  originDot = new THREE.Mesh(geo, mat);
+  originDot.position.z = 1;
+  originDot.visible = document.getElementById('toggleOrigin').checked;
+  scene.add(originDot);
+}
+
+createGrid();
+createAxes();
+createOriginDot();
+
+// ─── RESIZE ───
+function resize() {
+  const wrap = canvas.parentElement;
+  const w = wrap.clientWidth;
+  const h = wrap.clientHeight;
+  renderer.setSize(w, h);
+
+  const aspect = w / h;
+  const halfH = camera.position.z;
+  const halfW = halfH * aspect;
+  camera.left = -halfW;
+  camera.right = halfW;
+  camera.top = halfH;
+  camera.bottom = -halfH;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ─── ANIMATE ───
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+// ─── JSHAPE GENERATION ───
+function gcd(a, b) {
+  // Handle decimals by scaling to integers
+  const precision = 1e10;
+  a = Math.round(Math.abs(a) * precision);
+  b = Math.round(Math.abs(b) * precision);
+  while (b) { [a, b] = [b, a % b]; }
+  return a / precision;
+}
+
+function lcm(a, b) {
+  if (a === 0 || b === 0) return 0;
+  return Math.abs(a * b) / gcd(a, b);
+}
+
+function generateShape() {
+  // Clear previous
+  while (shapeGroup.children.length) {
+    const child = shapeGroup.children[0];
+    child.geometry?.dispose();
+    child.material?.dispose();
+    shapeGroup.remove(child);
+  }
+
+  // Parse inputs
+  const seedStr = document.getElementById('seedInput').value.trim();
+  const seeds = seedStr.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
+  if (seeds.length === 0) return;
+
+  const angleDeg = parseFloat(document.getElementById('angleInput').value) || 90;
+  const sizeMult = parseFloat(document.getElementById('sizeInput').value) || 100;
+  const iterations = parseInt(document.getElementById('iterInput').value) || 2520;
+  const thickness = parseFloat(document.getElementById('thickInput').value) || 1.5;
+  const lineColor = document.getElementById('colorInput').value;
+
+  // Multiply seed values by pixel multiplier
+  const scaledSeeds = seeds.map(s => s * sizeMult);
+
+  // Compute cycle length: lcm(seedLength, 360 / gcd(angle, 360))
+  const directionCycle = 360 / gcd(angleDeg, 360);
+  const cycleLength = lcm(seeds.length, directionCycle);
+  document.getElementById('statCycle').textContent = cycleLength.toLocaleString() + ' iters';
+
+  // Draw lines: starting at origin, rotating by angle each step
+  // Using the same trig as the Python code (sin for x, cos for y)
+  let x = 0;
+  let y = 0;
+  let currentAngle = 360; // Python starts at 360
+
+  const positions = [x, y, 0];
+  let totalLength = 0;
+
+  for (let i = 0; i < iterations; i++) {
+    const lineLen = scaledSeeds[i % scaledSeeds.length];
+    const rad = currentAngle * (Math.PI / 180);
+    const nx = x + lineLen * Math.sin(rad);
+    const ny = y + lineLen * Math.cos(rad);
+
+    positions.push(nx, ny, 0);
+    totalLength += Math.abs(lineLen);
+
+    x = nx;
+    y = ny;
+    currentAngle += angleDeg;
+  }
+
+  // Create fat line using Line2 for thickness control
+  const geometry = new LineGeometry();
+  geometry.setPositions(positions);
+
+  const matLine = new LineMaterial({
+    color: new THREE.Color(lineColor).getHex(),
+    linewidth: thickness,
+    worldUnits: false,
+    alphaToCoverage: false,
+  });
+  matLine.resolution.set(canvas.clientWidth, canvas.clientHeight);
+
+  const line = new Line2(geometry, matLine);
+  line.computeLineDistances();
+  shapeGroup.add(line);
+
+  // Store material ref for resize updates
+  shapeGroup.userData.lineMaterial = matLine;
+
+  // Update stats
+  document.getElementById('statLines').textContent = iterations.toLocaleString();
+  document.getElementById('statLength').textContent = Math.round(totalLength).toLocaleString() + ' px';
+
+  // Compute bounding box
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  for (let i = 0; i < positions.length; i += 3) {
+    if (positions[i] < minX) minX = positions[i];
+    if (positions[i] > maxX) maxX = positions[i];
+    if (positions[i+1] < minY) minY = positions[i+1];
+    if (positions[i+1] > maxY) maxY = positions[i+1];
+  }
+  const bw = Math.round(maxX - minX);
+  const bh = Math.round(maxY - minY);
+  document.getElementById('statBBox').textContent = `${bw} × ${bh}`;
+
+  // Auto-fit camera to shape — center of bounding box should land at screen center
+  const cx = (minX + maxX) / 2;
+  const cy = (minY + maxY) / 2;
+  const margin = 1.15;
+  const wrap = canvas.parentElement;
+  const aspect = wrap.clientWidth / wrap.clientHeight;
+  // halfSpan is half the visible height; width = halfSpan * aspect
+  const halfSpan = Math.max(bh / 2, bw / (2 * aspect)) * margin;
+
+  camera.position.set(cx, cy, 500);
+  controls.target.set(cx, cy, 0);
+
+  // Frustum bounds are in camera-space and must be symmetric around 0
+  // (camera.position already provides the world-space offset)
+  camera.left = -halfSpan * aspect;
+  camera.right = halfSpan * aspect;
+  camera.top = halfSpan;
+  camera.bottom = -halfSpan;
+  camera.updateProjectionMatrix();
+  controls.update();
+}
+
+function clearShape() {
+  while (shapeGroup.children.length) {
+    const child = shapeGroup.children[0];
+    child.geometry?.dispose();
+    child.material?.dispose();
+    shapeGroup.remove(child);
+  }
+  document.getElementById('statCycle').textContent = '—';
+  document.getElementById('statLines').textContent = '—';
+  document.getElementById('statLength').textContent = '—';
+  document.getElementById('statBBox').textContent = '—';
+
+  // Reset camera
+  camera.position.set(0, 0, 500);
+  controls.target.set(0, 0, 0);
+  resize();
+  controls.update();
+}
+
+// ─── EVENT LISTENERS ───
+document.getElementById('btnGenerate').addEventListener('click', generateShape);
+document.getElementById('btnClear').addEventListener('click', clearShape);
+
+document.getElementById('toggleGrid').addEventListener('change', (e) => {
+  if (gridHelper) gridHelper.visible = e.target.checked;
+});
+document.getElementById('toggleAxes').addEventListener('change', (e) => {
+  if (axesGroup) axesGroup.visible = e.target.checked;
+});
+document.getElementById('toggleOrigin').addEventListener('change', (e) => {
+  if (originDot) originDot.visible = e.target.checked;
+});
+
+document.getElementById('colorInput').addEventListener('input', (e) => {
+  document.getElementById('colorLabel').textContent = e.target.value;
+});
+
+// Generate on Enter key
+document.querySelectorAll('input').forEach(inp => {
+  if (inp.type !== 'checkbox' && inp.type !== 'color') {
+    inp.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') generateShape();
+    });
+  }
+});
+
+// Update line material resolution on resize
+const origResize = resize;
+window.addEventListener('resize', () => {
+  const mat = shapeGroup.userData.lineMaterial;
+  if (mat) mat.resolution.set(canvas.clientWidth, canvas.clientHeight);
+});
+
+// Generate default shape on load
+generateShape();
+</script>
+</body>
+</html>

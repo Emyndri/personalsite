@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jacob Cavallo</title>
+  <meta name="description" content="Personal website of Jacob Cavallo." />
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="home-hero">
+    <h1>Jacob Cavallo</h1>
+    <div class="accent-rule" aria-hidden="true"></div>
+
+    <nav class="home-links" aria-label="Primary">
+      <a class="link-card" href="https://www.linkedin.com/in/jacob-cavallo-a2325643/" target="_blank" rel="noopener noreferrer">
+        <div class="link-body">
+          <span class="link-label">LinkedIn</span>
+          <span class="link-desc">Professional background and experience.</span>
+        </div>
+        <span class="arrow">&rarr;</span>
+      </a>
+
+      <a class="link-card" href="mailto:jacob@jacobcavallo.com">
+        <div class="link-body">
+          <span class="link-label">Contact</span>
+          <span class="link-desc">Contact me.</span>
+        </div>
+        <span class="arrow">&rarr;</span>
+      </a>
+
+      <a class="link-card" href="photos.html">
+        <div class="link-body">
+          <span class="link-label">Photos</span>
+          <span class="link-desc">Dive and travel photography.</span>
+        </div>
+        <span class="arrow">&rarr;</span>
+      </a>
+
+      <a class="link-card" href="videos.html">
+        <div class="link-body">
+          <span class="link-label">Videos</span>
+          <span class="link-desc">Underwater and submarine footage taken by me.</span>
+        </div>
+        <span class="arrow">&rarr;</span>
+      </a>
+
+      <a class="link-card" href="jshapes.html">
+        <div class="link-body">
+          <span class="link-label">Jshapes</span>
+          <span class="link-desc">Computer generated art.</span>
+        </div>
+        <span class="arrow">&rarr;</span>
+      </a>
+    </nav>
+  </main>
+
+  <footer class="site-footer">
+    &copy; <span id="year"></span> Jacob Cavallo
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
