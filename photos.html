@@ -38,4 +38,142 @@
 
       <div class="photo"><img src="images/photo-9.jpg" alt="Photo 9" loading="lazy" /></div>
       <div class="photo"><img src="images/photo-10.jpg" alt="Photo 10" loading="lazy" /></div>
-      <di
+      <div class="photo"><img src="images/photo-11.jpg" alt="Photo 11" loading="lazy" /></div>
+      <div class="photo"><img src="images/photo-12.jpg" alt="Photo 12" loading="lazy" /></div>
+
+      <div class="photo"><img src="images/photo-13.jpg" alt="Photo 13" loading="lazy" /></div>
+      <div class="photo"><img src="images/photo-14.jpg" alt="Photo 14" loading="lazy" /></div>
+      <div class="photo"><img src="images/photo-15.jpg" alt="Photo 15" loading="lazy" /></div>
+      <div class="photo"><img src="images/photo-16.jpg" alt="Photo 16" loading="lazy" /></div>
+
+      <div class="photo"><img src="images/photo-17.jpg" alt="Photo 17" loading="lazy" /></div>
+      <div class="photo"><img src="images/photo-18.jpg" alt="Photo 18" loading="lazy" /></div>
+      <div class="photo"><img src="images/photo-19.jpg" alt="Photo 19" loading="lazy" /></div>
+      <div class="photo"><img src="images/photo-20.jpg" alt="Photo 20" loading="lazy" /></div>
+
+      <div class="photo"><img src="images/photo-21.jpg" alt="Photo 21" loading="lazy" /></div>
+      <div class="photo"><img src="images/photo-22.jpg" alt="Photo 22" loading="lazy" /></div>
+      <div class="photo"><img src="images/photo-23.jpg" alt="Photo 23" loading="lazy" /></div>
+      <div class="photo"><img src="images/photo-24.jpg" alt="Photo 24" loading="lazy" /></div>
+
+      <div class="photo"><img src="images/photo-25.jpg" alt="Photo 25" loading="lazy" /></div>
+      <div class="photo"><img src="images/photo-26.jpg" alt="Photo 26" loading="lazy" /></div>
+      <div class="photo"><img src="images/photo-27.jpg" alt="Photo 27" loading="lazy" /></div>
+      <div class="photo"><img src="images/photo-28.jpg" alt="Photo 28" loading="lazy" /></div>
+
+      <div class="photo"><img src="images/photo-29.jpg" alt="Photo 29" loading="lazy" /></div>
+      <div class="photo"><img src="images/photo-30.jpg" alt="Photo 30" loading="lazy" /></div>
+      <div class="photo"><img src="images/photo-31.jpg" alt="Photo 31" loading="lazy" /></div>
+      <div class="photo"><img src="images/photo-32.jpg" alt="Photo 32" loading="lazy" /></div>
+
+      <div class="photo"><img src="images/photo-33.jpg" alt="Photo 33" loading="lazy" /></div>
+      <div class="photo"><img src="images/photo-34.jpg" alt="Photo 34" loading="lazy" /></div>
+      <div class="photo"><img src="images/photo-35.jpg" alt="Photo 35" loading="lazy" /></div>
+      <div class="photo"><img src="images/photo-36.jpg" alt="Photo 36" loading="lazy" /></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    &copy; <span id="year"></span> Jacob Cavallo
+  </footer>
+
+  <!-- Lightbox overlay -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer" aria-hidden="true">
+    <button class="lightbox-btn lightbox-close" id="lightboxClose" aria-label="Close (Esc)">&times;</button>
+    <button class="lightbox-btn lightbox-prev" id="lightboxPrev" aria-label="Previous photo (Left arrow)">&lsaquo;</button>
+    <div class="lightbox-img-wrap">
+      <img class="lightbox-img" id="lightboxImg" alt="" />
+    </div>
+    <button class="lightbox-btn lightbox-next" id="lightboxNext" aria-label="Next photo (Right arrow)">&rsaquo;</button>
+    <div class="lightbox-counter" id="lightboxCounter">1 / 1</div>
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // ---------- Lightbox ----------
+    (function () {
+      const photos = Array.from(document.querySelectorAll('.photo-grid .photo img'));
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightboxImg');
+      const counter = document.getElementById('lightboxCounter');
+      const closeBtn = document.getElementById('lightboxClose');
+      const prevBtn = document.getElementById('lightboxPrev');
+      const nextBtn = document.getElementById('lightboxNext');
+      let currentIndex = 0;
+
+      function show(index) {
+        currentIndex = (index + photos.length) % photos.length;
+        const img = photos[currentIndex];
+        lightboxImg.src = img.src;
+        lightboxImg.alt = img.alt || '';
+        counter.textContent = (currentIndex + 1) + ' / ' + photos.length;
+      }
+
+      function open(index) {
+        show(index);
+        lightbox.classList.add('active');
+        lightbox.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('lightbox-open');
+      }
+
+      function close() {
+        lightbox.classList.remove('active');
+        lightbox.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('lightbox-open');
+      }
+
+      function next() { show(currentIndex + 1); }
+      function prev() { show(currentIndex - 1); }
+
+      photos.forEach((img, i) => {
+        img.addEventListener('click', () => open(i));
+      });
+
+      closeBtn.addEventListener('click', close);
+      nextBtn.addEventListener('click', (e) => { e.stopPropagation(); next(); });
+      prevBtn.addEventListener('click', (e) => { e.stopPropagation(); prev(); });
+
+      // Click on the dim backdrop closes — but not clicks on the image itself
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox || e.target.classList.contains('lightbox-img-wrap')) {
+          close();
+        }
+      });
+
+      // Keyboard navigation
+      document.addEventListener('keydown', (e) => {
+        if (!lightbox.classList.contains('active')) return;
+        if (e.key === 'Escape') close();
+        else if (e.key === 'ArrowRight') next();
+        else if (e.key === 'ArrowLeft') prev();
+      });
+
+      // Touch swipe — left/right to navigate, down to close
+      let touchStartX = 0, touchStartY = 0, touchActive = false;
+      lightbox.addEventListener('touchstart', (e) => {
+        if (e.touches.length !== 1) { touchActive = false; return; }
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        touchActive = true;
+      }, { passive: true });
+
+      lightbox.addEventListener('touchend', (e) => {
+        if (!touchActive) return;
+        touchActive = false;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - touchStartX;
+        const dy = t.clientY - touchStartY;
+        const absX = Math.abs(dx);
+        const absY = Math.abs(dy);
+        const SWIPE_THRESHOLD = 40;
+        if (absX > SWIPE_THRESHOLD && absX > absY) {
+          if (dx < 0) next(); else prev();
+        } else if (dy > SWIPE_THRESHOLD * 1.5 && absY > absX) {
+          close();
+        }
+      }, { passive: true });
+    })();
+  </script>
+</body>
+</html>
