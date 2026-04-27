@@ -374,17 +374,33 @@
 
   /* ─── FLOATING ANGLE BAR ─── */
   .angle-bar {
-    position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
-    display: flex; align-items: center; gap: 14px;
+    position: absolute; left: 50%; transform: translateX(-50%);
+    bottom: max(18px, env(safe-area-inset-bottom, 18px));
+    display: flex; align-items: center; gap: 10px;
     background: rgba(17,17,24,0.92); border: 1px solid var(--border); border-radius: 999px;
-    padding: 10px 18px; backdrop-filter: blur(10px); z-index: 5;
-    width: min(480px, calc(100% - 32px));
+    padding: 8px 14px; backdrop-filter: blur(10px); z-index: 5;
+    width: min(520px, calc(100% - 24px));
     box-shadow: 0 4px 24px rgba(0,0,0,0.5);
     transition: opacity 0.2s ease;
   }
+  /* On mobile, angle bar is hidden behind the open drawer for clarity */
   @media (max-width: 720px) {
     body:not(.sidebar-collapsed) .angle-bar { opacity: 0; pointer-events: none; }
+    .angle-bar-label { display: none; }
   }
+  .angle-bar-step {
+    background: var(--bg-input); border: 1px solid var(--border); color: var(--text-secondary);
+    width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 18px; font-family: inherit; padding: 0;
+    flex-shrink: 0; line-height: 1;
+    transition: color 0.15s, border-color 0.15s, background 0.15s, transform 0.1s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .angle-bar-step:hover, .angle-bar-step:focus-visible {
+    color: var(--accent); border-color: var(--accent); background: var(--bg-hover); outline: none;
+  }
+  .angle-bar-step:active { transform: scale(0.92); }
   .angle-bar-label {
     font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
     color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1.2px; flex-shrink: 0;
@@ -519,12 +535,14 @@
   <canvas id="three-canvas"></canvas>
   <div class="canvas-hint">scroll to zoom · drag to pan · right-drag to rotate</div>
 
-  <!-- Floating angle slider — drag to update angle live -->
+  <!-- Floating angle slider — drag to update angle live, arrows for fine adjust -->
   <div class="angle-bar" role="group" aria-label="Angle control">
     <span class="angle-bar-label">Angle</span>
+    <button class="angle-bar-step" id="angleStepDown" aria-label="Decrease angle by 1 degree">&lsaquo;</button>
     <input type="range" class="angle-bar-slider" id="angleSlider"
            min="0" max="360" step="1" value="37"
            aria-label="Angle in degrees">
+    <button class="angle-bar-step" id="angleStepUp" aria-label="Increase angle by 1 degree">&rsaquo;</button>
     <span class="angle-bar-value" id="angleSliderValue">37&deg;</span>
   </div>
 </div>
@@ -556,7 +574,7 @@ camera.position.set(0, 0, 500);
 camera.lookAt(0, 0, 0);
 
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableRotate = true;
+controls.enableRotate = false; // 2D shape; rotation causes phasing on touch drag
 controls.enablePan = true;
 controls.enableZoom = true;
 controls.screenSpacePanning = true;
@@ -872,6 +890,22 @@ angleSlider.addEventListener('input', (e) => {
 });
 
 angleInputElem.addEventListener('input', syncSliderFromInput);
+
+// Step buttons — fine-tune angle by 1 degree per click
+const angleStepDown = document.getElementById('angleStepDown');
+const angleStepUp = document.getElementById('angleStepUp');
+
+function nudgeAngle(delta) {
+  let next = (parseFloat(angleInputElem.value) || 0) + delta;
+  // Wrap into [0, 360)
+  while (next < 0) next += 360;
+  while (next >= 360) next -= 360;
+  angleInputElem.value = next;
+  syncSliderFromInput();
+  generateShape(false);
+}
+angleStepDown.addEventListener('click', () => nudgeAngle(-1));
+angleStepUp.addEventListener('click', () => nudgeAngle(1));
 
 // Generate default shape on load
 generateShape();
